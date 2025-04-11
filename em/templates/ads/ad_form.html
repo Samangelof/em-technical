@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if ad %}Редактировать объявление{% else %}Создать объявление{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>{% if ad %}Редактировать объявление{% else %}Создать объявление{% endif %}</h1>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="styled-form">
+        {% csrf_token %}
+        
+        <div class="form-grid">
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-help">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                {% if ad %}Сохранить изменения{% else %}Опубликовать объявление{% endif %}
+            </button>
+            <a href="{% if ad %}{% url 'ad_detail' ad.id %}{% else %}{% url 'ad_list' %}{% endif %}" class="btn-secondary">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

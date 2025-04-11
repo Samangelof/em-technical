@@ -1,0 +1,30 @@
+<!-- ads/templates/ad_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Список объявлений{% endblock %}
+
+{% block content %}
+<div class="ads-container">
+    <h1 class="ads-title">Список объявлений</h1>
+
+    <a href="{% url 'create_ad' %}" class="ads-create-btn">Создать новое объявление</a>
+
+
+    <ul class="ads-list">
+        {% for ad in ads %}
+        <li class="ads-item">
+            <a href="{% url 'ad_detail' ad.id %}" class="ads-link">
+                <div class="ads-link-content">
+                    <span class="ads-title">{{ ad.title }}</span>
+                    <span class="ads-meta">{{ ad.category }} • {{ ad.get_condition_display }}</span>
+                </div>
+            </a>
+
+            {% if request.user == ad.user %}
+            <a href="{% url 'edit_ad' ad.id %}" class="ads-edit-btn">✏️</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

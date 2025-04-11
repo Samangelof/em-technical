@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ ad.title }}{% endblock %}
+
+{% block content %}
+    <div class="ad-detail-container">
+        <h1 class="ad-detail-title">{{ ad.title }}</h1>
+        
+        <div class="ad-detail-meta">
+            <span class="ad-detail-category">{{ ad.category }}</span>
+            <span class="ad-detail-condition">{{ ad.get_condition_display }}</span>
+            <span class="ad-detail-date">{{ ad.created_at }}</span>
+        </div>
+
+        {% if ad.image_url %}
+            <div class="ad-detail-image">
+                <img src="{{ ad.image_url }}" alt="{{ ad.title }}" class="ad-detail-img">
+            </div>
+        {% endif %}
+
+        <p class="ad-detail-description">{{ ad.description }}</p>
+
+        <div class="ad-detail-actions">
+            <a href="{% url 'ad_list' %}" class="ad-detail-back-btn">← Назад к списку</a>
+            {% if request.user == ad.user %}
+            <a href="{% url 'edit_ad' ad.id %}" class="ad-detail-edit-btn">Редактировать</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
