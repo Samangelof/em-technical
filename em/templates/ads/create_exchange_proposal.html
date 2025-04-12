@@ -1,0 +1,15 @@
+
+{% extends 'base.html' %}
+
+{% block title %}{{ ad.title }}{% endblock %}
+
+{% block content %}
+<!-- em/templates/ads/create_exchange_proposal.html -->
+<h2>Предложить обмен</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Предложить обмен</button>
+</form>
+
+{% endblock %}

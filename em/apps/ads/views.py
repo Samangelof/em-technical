@@ -5,8 +5,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from core.models import Ad
-from .forms import AdForm
+from core.models import Ad, ExchangeProposal
+from .forms import AdForm, ExchangeProposalForm
 
 
 def signup(request):
@@ -94,3 +94,39 @@ def delete_ad(request, ad_id):
         return redirect('ad_list')
 
     return render(request, 'ads/ad_confirm_delete.html', {'ad': ad})
+
+
+@login_required
+def create_exchange_proposal(request, ad_id):
+    ad_sender = get_object_or_404(Ad, id=ad_id)
+    if ad_sender.user == request.user:
+        return HttpResponseForbidden("Нельзя предложить обмен самому себе")
+
+    if request.method == 'POST':
+        form = ExchangeProposalForm(request.POST)
+        if form.is_valid():
+            ad_receiver = form.cleaned_data['ad_receiver']
+            if ExchangeProposal.objects.filter(ad_sender=ad_sender, ad_receiver=ad_receiver, status='pending').exists():
+                return HttpResponseForbidden("Предложение обмена уже существует")
+
+            proposal = form.save(commit=False)
+            proposal.ad_sender = ad_sender
+            proposal.status = 'pending'
+            proposal.save()
+            return redirect('ad_list')
+    else:
+        form = ExchangeProposalForm()
+
+    return render(request, 'ads/create_exchange_proposal.html', {'form': form, 'ad': ad_sender})
+
+
+@login_required
+def update_exchange_proposal_status(request, proposal_id, new_status):
+    proposal = get_object_or_404(ExchangeProposal, id=proposal_id)
+
+    if proposal.ad_receiver.user != request.user:
+        return HttpResponseForbidden("Вы не можете изменить статус этого предложения.")
+
+    proposal.status = new_status
+    proposal.save()
+    return redirect('ad_list')

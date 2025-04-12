@@ -20,10 +20,8 @@ class AdForm(forms.ModelForm):
 class ExchangeProposalForm(forms.ModelForm):
     class Meta:
         model = ExchangeProposal
-        fields = ['ad_sender', 'ad_receiver', 'comment', 'status']
+        fields = ['ad_receiver', 'comment']
         labels = {
-            'ad_sender': 'Отправитель объявления',
             'ad_receiver': 'Получатель объявления',
             'comment': 'Комментарий',
-            'status': 'Статус предложения',
         }
