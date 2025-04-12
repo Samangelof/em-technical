@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from core.models import Ad
 from .forms import AdForm
 
@@ -50,7 +52,6 @@ def ad_detail(request, ad_id):
         return HttpResponseNotFound('Объявление не найдено')
     return render(request, 'ads/ad_detail.html', {'ad': ad})
 
-
 def create_ad(request):
     if request.method == 'POST':
         form = AdForm(request.POST, request.FILES)
@@ -78,3 +79,18 @@ def edit_ad(request, ad_id):
     else:
         form = AdForm(instance=ad)
     return render(request, 'ads/ad_form.html', {'form': form, 'ad': ad})
+
+
+@require_http_methods(["GET", "POST"])
+@login_required(login_url='/login/')
+def delete_ad(request, ad_id):
+    ad = get_object_or_404(Ad, id=ad_id)
+
+    if request.user != ad.user:
+        return HttpResponseForbidden("У вас нет прав на удаление этого объявления")
+
+    if request.method == 'POST':
+        ad.delete()
+        return redirect('ad_list')
+
+    return render(request, 'ads/ad_confirm_delete.html', {'ad': ad})

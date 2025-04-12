@@ -40,7 +40,6 @@
 .ads-item {
     background: white;
     border-radius: 8px;
-    padding: 1rem;
     margin-bottom: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     display: flex;
@@ -48,8 +47,6 @@
     align-items: center;
     border-left: 4px solid #64ffda;
     transition: transform 0.2s;
-    position: relative; /* Для позиционирования кнопки редактирования */
-    padding: 0; /* Убираем стандартные отступы <li> */
 }
 
 .ads-item:hover {
@@ -62,13 +59,11 @@
     fill: var(--agressive-red);
 }
 
-
 .ads-link {
-    color: var(--text-dark);
-    font-weight: 500;
+    flex: 1;
     display: block;
     padding: 1rem;
-    color: inherit;
+    text-decoration: none;
 }
 .ads-link:hover {
     text-decoration: underline;
@@ -82,24 +77,37 @@
     margin-top: 0.25rem;
 }
 
-.ads-edit-btn {
-    color: var(--text-gray);
-    text-decoration: none;
-    padding: 0.5rem;
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: opacity 0.2s;
-    color: var(--gray);
-    padding: 0.5rem;
-}
 
 .ads-item:hover .ads-edit-btn {
     opacity: 1;
 }
 
+
+.ads-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-right: 1rem;
+}
+.ads-edit-btn,
+.ads-delete-btn {
+    font-size: 1.2rem;
+    text-decoration: none;
+    padding: 0.3rem 0.4rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+    color: #6B7280;
+}
+
+.ads-edit-btn:hover,
+.ads-delete-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
 .ads-edit-btn:hover {
-    color: var(--text-gray);
+    color: #0d9488;
+}
+
+.ads-delete-btn:hover {
+    color: #dc2626;
 }

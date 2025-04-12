@@ -16,13 +16,13 @@ class Ad(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор объявления")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор объявления", related_name='ads')
     title = models.CharField(max_length=255, verbose_name="Заголовок объявления")
     description = models.TextField(verbose_name="Описание товара")
     image_url = models.URLField(blank=True, null=True, verbose_name="URL изображения")
     category = models.CharField(max_length=255, verbose_name="Категория товара")
     condition = models.CharField(
-        max_length=4,
+        max_length=6,
         choices=CONDITION_CHOICES,
         default=USED,
         verbose_name="Состояние товара"

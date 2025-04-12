@@ -68,7 +68,11 @@ body {
     align-items: center;
 }
 .auth-link.exit{
-    background-color: darkred;
+    background-color: rgb(199, 8, 8);
+    color: white;
+}
+.auth-link.exit:hover{
+    background-color: rgb(202, 68, 68);
     color: white;
 }
 .auth-link {

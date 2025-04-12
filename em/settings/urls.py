@@ -9,11 +9,11 @@ from settings.config import ADMIN_SITE_URL
 
 urlpatterns = [
     path(ADMIN_SITE_URL, admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/docs/', include('settings.urls_docs')),
+    # path('api-auth/', include('rest_framework.urls')),    # Канонический путь для DRF
+    path('docs/api/', include('settings.urls_docs')),   # Docs
 
-    path('', include('ads.urls')),
-    path('api/', include('api.urls')),
+    path('ads/', include('ads.urls')),  # MVC
+    path('api/', include('api.urls')),  # REST API
 ]
 
 if settings.DEBUG:

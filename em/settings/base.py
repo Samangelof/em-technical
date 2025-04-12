@@ -29,22 +29,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',  # CORS
-    'drf_yasg',     # Swagger
+    'corsheaders',
+    'drf_spectacular',
     'rest_framework',
     'rest_framework_simplejwt',   # For Frontend JWT Auth
     'ads.apps.AdsConfig', 
     'api.apps.ApiConfig',
     'core.apps.CoreConfig',
-
-
 ]
 
 # ------------------------------------------------
 # CORS
 CORS_ORIGIN_ALLOW_ALL = DEBUG 
 CORS_ALLOW_ALL_ORIGINS = DEBUG 
-
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
 # CORS Production
 # CORS_ALLOWED_ORIGINS = [
 #     "https://devunlimited.tech",
@@ -55,9 +56,9 @@ CORS_ALLOW_ALL_ORIGINS = DEBUG
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     "corsheaders.middleware.CorsMiddleware",
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',    #! Для тестов на swagger, закомментировать - '.CsrfViewMiddleware'
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -111,21 +112,33 @@ DATABASES = {
 
 # ------------------------------------------------
 # Documentation
+# settings.py
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
-            'in': 'header'
+            'in': 'header',
+            'description': 'Type in the *\'Bearer\'* prefix followed by space and JWT token. Example: "Bearer abcde12345"'
         }
     },
     'USE_SESSION_AUTH': False,
+    'DEFAULT_MODEL_RENDERING': 'example'
+    # 'LOGIN_URL': 'admin:login',
+    # 'LOGOUT_URL': 'admin:logout',
 }
 
-REDOC_SETTINGS = {
-    'LAZY_RENDERING': True,
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Documentation',
+    'DESCRIPTION': 'API Documentation',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'AUTHENTICATION_WHITELIST': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'SCHEMA_PATH_PREFIX': r'/api/',
 }
-
 # ------------------------------------------------
 # logging
 LOG_DIR = os.path.join(BASE_DIR, "logs")
@@ -250,6 +263,7 @@ JAZZMIN_SETTINGS = {
 # ------------------------------------------------
 # Simple JWT
 SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
@@ -257,7 +271,6 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
-    'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
@@ -271,7 +284,7 @@ REST_FRAMEWORK = {
     # Аутентификация
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     
     # Права доступа
@@ -279,7 +292,11 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticated',
     ],
-    
+    'DEFAULT_THROTTLE_CLASSES': [],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '5/minute'
+    },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # Пагинация
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
