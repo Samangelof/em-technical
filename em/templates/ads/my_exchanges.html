@@ -1,0 +1,254 @@
+<!-- templates/ads/my_exchanges.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Мои сделки{% endblock %}
+
+{% block content %}
+<div class="exchanges-container">
+    <h1 class="exchanges-title">Мои сделки</h1>
+
+    <div class="exchanges-tabs">
+        <button class="tab-btn active" onclick="openTab('sent')">Мои предложения</button>
+        <button class="tab-btn" onclick="openTab('received')">Полученные предложения</button>
+    </div>
+
+    <!-- Вкладка отправленных предложений -->
+    <div id="sent" class="tab-content" style="display: block;">
+        <h2>Отправленные предложения</h2>
+        {% if sent_proposals %}
+            <ul class="proposals-list">
+                {% for proposal in sent_proposals %}
+                <li class="proposal-item">
+                    <div class="proposal-header">
+                        <span class="proposal-status {{ proposal.status }}">{{ proposal.get_status_display }}</span>
+                        <span class="proposal-date">{{ proposal.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="proposal-details">
+                        <p><strong>Моё объявление:</strong> 
+                            <a href="{% url 'ad_detail' proposal.ad_sender.id %}">{{ proposal.ad_sender.title }}</a>
+                        </p>
+                        <p><strong>Предложено на:</strong> 
+                            <a href="{% url 'ad_detail' proposal.ad_receiver.id %}">{{ proposal.ad_receiver.title }}</a>
+                        </p>
+                        {% if proposal.comment %}
+                        <p class="proposal-comment"><strong>Комментарий:</strong> {{ proposal.comment }}</p>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-proposals">Вы ещё не отправляли предложений обмена.</p>
+        {% endif %}
+    </div>
+
+    <!-- Вкладка полученных предложений -->
+    <div id="received" class="tab-content">
+        <h2>Полученные предложения</h2>
+        {% if received_proposals %}
+            <ul class="proposals-list">
+                {% for proposal in received_proposals %}
+                <li class="proposal-item">
+                    <div class="proposal-header">
+                        <span class="proposal-status {{ proposal.status }}">{{ proposal.get_status_display }}</span>
+                        <span class="proposal-date">{{ proposal.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="proposal-details">
+                        <p><strong>От пользователя:</strong> {{ proposal.ad_sender.user.username }}</p>
+                        <p><strong>Предложено обменять:</strong> 
+                            <a href="{% url 'ad_detail' proposal.ad_sender.id %}">{{ proposal.ad_sender.title }}</a>
+                        </p>
+                        <p><strong>На моё объявление:</strong> 
+                            <a href="{% url 'ad_detail' proposal.ad_receiver.id %}">{{ proposal.ad_receiver.title }}</a>
+                        </p>
+                        {% if proposal.comment %}
+                        <p class="proposal-comment"><strong>Комментарий:</strong> {{ proposal.comment }}</p>
+                        {% endif %}
+                        
+                        {% if proposal.status == 'pending' %}
+                        <div class="proposal-actions">
+                            <a href="{% url 'update_exchange_status' proposal.id 'accepted' %}" class="btn accept">Принять</a>
+                            <a href="{% url 'update_exchange_status' proposal.id 'rejected' %}" class="btn reject">Отклонить</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-proposals">У вас нет новых предложений обмена.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.exchanges-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.exchanges-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--dark);
+}
+
+.exchanges-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--gray);
+    position: relative;
+}
+
+.tab-btn.active {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--dark);
+}
+
+.tab-content {
+    display: none;
+}
+
+.proposals-list {
+    list-style: none;
+    padding: 0;
+}
+
+.proposal-item {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-light);
+}
+
+.proposal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.proposal-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.proposal-status.pending {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.proposal-status.accepted {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.proposal-status.rejected {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.proposal-date {
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.proposal-details p {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.proposal-comment {
+    padding: 0.75rem;
+    background: white;
+    border-radius: 4px;
+    border-left: 3px solid var(--gray);
+}
+
+.proposal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn.accept {
+    background-color: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.btn.accept:hover {
+    background-color: #A7F3D0;
+}
+
+.btn.reject {
+    background-color: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.btn.reject:hover {
+    background-color: #FECACA;
+}
+
+.no-proposals {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray);
+    font-style: italic;
+}
+</style>
+
+<script>
+function openTab(tabName) {
+    // Скрыть все вкладки
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    
+    // Показать выбранную вкладку
+    document.getElementById(tabName).style.display = 'block';
+    
+    // Обновить активные кнопки
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+}
+</script>
+{% endblock %}

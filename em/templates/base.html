@@ -1,0 +1,49 @@
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://devunlimited.tech/img/favicon/favicon-16x16.png">
+
+    <title>{% block title %}Бартерная система{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static '/css/reset.css' %}">
+    <link rel="stylesheet" href="{% static '/css/main.css' %}">
+    <link rel="stylesheet" href="{% static '/css/ad_list.css' %}">
+    <link rel="stylesheet" href="{% static '/css/ad_form.css' %}">
+    <link rel="stylesheet" href="{% static '/css/ad_detail.css' %}">
+    <link rel="stylesheet" href="{% static '/css/ad_conf_del.css' %}">
+    <link rel="stylesheet" href="{% static '/css/exchanges.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <a href="{% url 'ad_list' %}" class="logo">
+                <img src="{% static 'images/barter.png' %}" alt="Логотип">
+                <span>Бартерная система</span>
+            </a>
+
+            <div class="auth-links">
+                {% if user.is_authenticated %}
+                <a href="{% url 'my_exchanges' %}" class="auth-link">Мои сделки</a>
+                <span class="username">{{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="auth-link exit">Выйти</a>
+                {% else %}
+                <a href="{% url 'login' %}" class="auth-link">Войти</a>
+                <a href="{% url 'signup' %}" class="auth-link primary">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>

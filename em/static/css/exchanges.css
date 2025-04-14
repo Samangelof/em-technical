@@ -1,0 +1,88 @@
+.exchanges-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.exchanges-tabs {
+    display: flex;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.tab-btn.active {
+    border-bottom: 2px solid var(--dark);
+}
+
+.proposals-list {
+    list-style: none;
+}
+
+.proposal-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.proposal-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.proposal-status.pending {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.proposal-status.accepted {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.proposal-status.rejected {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.proposal-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn.accept {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.btn.reject {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.proposal-comment {
+    color: var(--text-gray);
+    font-style: italic;
+    margin-top: 0.5rem;
+}
